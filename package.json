@@ -1,0 +1,11 @@
+{
+  "name": "jwtauthapi",
+  "version": "1.0.0",
+  "description": "An user auth api using json web tokens ",
+  "main": "apiserver.js",
+  "scripts": {
+    "test": "nodemon apiserver.js"
+  },
+  "author": "sarthak1598",
+  "license": "ISC"
+}
