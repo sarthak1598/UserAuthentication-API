@@ -1,13 +1,17 @@
 const express = require("express") ; 
 const router = express.Router() ; 
+
 const con = require("../database/dbconfig") ; 
+
+const {check , validationResult} = require('express-validator'); 
 
 const jwt = require("jsonwebtoken") ;
 const morgan = require("morgan") ; // request logging middleware  
+
 // data validation middleware joi 
 const Joi = require('joi');
-
 const priv_key = "jwtauthtokenpassword" ; 
+
 // main home route 
 router.get('/' , (req , res) => { 
     res.send("Welcome to the Tokenised Authentication Api") ; 
@@ -16,13 +20,7 @@ router.get('/' , (req , res) => {
 // registration route  
 router.post('/register', (req , res) => { 
     // as a dynamic query string passed in url 
-    const {error} = joivalidation(req.body);
-
-    if(error)
-    {
-        return res.status(403).send(error.details[0].message)
-    } 
-
+    
        let name = req.query.user ; 
        let email = req.query.email ; 
        let password = req.query.pass ; 
@@ -45,12 +43,7 @@ router.post('/register', (req , res) => {
 // Login/auth check route  
  router.post("/login" , (req , res) => { 
      console.log("route working");
-     const {error} = joivalidation(req.body);
 
-if(error)
-{
-    return res.status(403).send(error.details[0])
-}
     let email = req.body.email ; 
     let pass = req.body.pass ; 
 
@@ -110,15 +103,5 @@ function checktoken(res ,info){
         res.send("Please provide the auth token !");
     }
 }
-
-function joivalidation(info){ 
-    let Schema = Joi.object().keys({ 
-
-       // 'name': Joi.string().min(4).max(50).required(),
-            'email': Joi.string().email() ,
-                'Password': Joi.string().min(8).max(20)
-    })
-    return Schema.validate(info) ;
-} 
 
 module.exports = router ; 
