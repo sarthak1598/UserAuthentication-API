@@ -19,13 +19,13 @@ router.get('/' , (req , res) => {
 
 // registration route/ validations logic updated   
 router.post('/register', [
-    check('name').isLength({ min: 3 }),
+    check('user').isLength({ min: 3 }),
       check('email').isEmail(),
-        check('password').isLength({ min : 3})
+        check('pass').isLength({ min : 3})
   ] , 
        (req , res) => { 
         let err = validationResult(req) ; 
-          if(err){
+          if(!err.isEmpty()){
              return res.status(500).json({erros : err.array()})
           }
 
@@ -48,7 +48,7 @@ router.post('/register', [
 
 }); 
 
-// Login/auth check route  
+// Login/auth check route  / validated
  router.post("/login" , [
     check('email').isEmail() ,
     check('pass').isLength({ min: 3 }).isAlphanumeric()
