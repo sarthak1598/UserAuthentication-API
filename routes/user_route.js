@@ -17,10 +17,18 @@ router.get('/' , (req , res) => {
     res.send("Welcome to the Tokenised Authentication Api") ; 
 });
 
-// registration route  
-router.post('/register', (req , res) => { 
-    // as a dynamic query string passed in url 
-    
+// registration route/ validations logic updated   
+router.post('/register', [
+    check('name').isLength({ min: 3 }),
+      check('email').isEmail(),
+        check('password').isLength({ min : 3})
+  ] , 
+       (req , res) => { 
+        let err = validationResult(req) ; 
+          if(err){
+             return res.status(500).json({erros : err.array()})
+          }
+
        let name = req.query.user ; 
        let email = req.query.email ; 
        let password = req.query.pass ; 
@@ -41,8 +49,17 @@ router.post('/register', (req , res) => {
 }); 
 
 // Login/auth check route  
- router.post("/login" , (req , res) => { 
-     console.log("route working");
+ router.post("/login" , [
+    check('email').isEmail() ,
+    check('pass').isLength({ min: 3 }).isAlphanumeric()
+
+  ] , (req , res) => { 
+     console.log("route working") ; 
+
+     let err = validationResult(req) ; 
+     if(!err.isEmpty()){
+        return res.status(500).json({erros : err.array()})
+     }
 
     let email = req.body.email ; 
     let pass = req.body.pass ; 
