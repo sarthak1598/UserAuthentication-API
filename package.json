@@ -16,6 +16,7 @@
     "express-session": "^1.17.1",
     "express-validator": "^6.9.2",
     "helmet": "^4.3.1",
+    "ioredis": "^4.19.4",
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",

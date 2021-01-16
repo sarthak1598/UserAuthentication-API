@@ -3,6 +3,7 @@ let mysql = require('mysql') ;
 const { execPath } = require("process");
 
 let con = mysql.createConnection({ 
+    
     host : 'localhost' , 
     user : 'root' , 
     password : 'password',

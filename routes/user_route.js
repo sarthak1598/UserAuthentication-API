@@ -8,14 +8,7 @@ const {check , validationResult} = require('express-validator');
 const jwt = require("jsonwebtoken") ;
 const morgan = require("morgan") ; // request logging middleware  
 
-// data validation middleware joi 
-const Joi = require('joi');
-const priv_key = "jwtauthtokenpassword" ; 
-
-// main home route 
-router.get('/' , (req , res) => { 
-    res.send("Welcome to the Tokenised Authentication Api") ; 
-});
+const middleware = require('../middlewares/jwtauth') ; 
 
 // registration route/ validations logic updated   
 router.post('/register', [
@@ -76,7 +69,7 @@ router.post('/register', [
                  // return res.status
                if(pass == results[0].password){    
                       // jwt token generated after success login 
-                  var token = jwt.sign(results[0].password , priv_key);
+                  var token = jwt.sign(results[0].password , "authenticatemytoken");
                   console.log(token) ; 
                // send response as token value 
                         res.json({status:"user found" , User_token : token });
@@ -97,28 +90,13 @@ router.post('/register', [
 
 }); 
 
-// new route for jwt authentication to be hitted with token passed as json using express middlewares
-router.post('/tokenauth' , (req , res) => { 
-       let token = req.body.token ; 
-            checktoken(res , token) ; 
+// after logged in 
+router.use(middleware)
+
+router.get('/', (req , res ) => { 
+     // let token = req.body.token ; 
+  //   console.log(key)
+     console.log("Authentication done , Authenticated to access the page")
+       res.send("Authorised to access the page, Welcome")
 });
-
-// jwt authentication fucntion ; 
-function checktoken(res ,info){
-    if(info){
-        jwt.verify(info , priv_key , (err) => {
-             if(err){
-                 return res.status(500).send("Token is not valid !! auth failed") ;
-             }     
-             else{
-                return res.json({status:"Auth Token verified" , message:"user authenticated successsfully"}) ; 
-            }
-        })
-    }
-
-    else{ 
-        res.send("Please provide the auth token !");
-    }
-}
-
 module.exports = router ; 
