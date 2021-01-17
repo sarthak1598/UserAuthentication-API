@@ -10,11 +10,23 @@ const morgan = require("morgan") ; // request logging middleware
 
 const middleware = require('../middlewares/jwtauth') ; 
 
+// rate limiting middleware integrated with redis-server
+const ratelimit = require('../middlewares/redis_ratelimiter')
+router.use(ratelimit)
+
+// about page 
+router.get('/about' , (req , res) => {
+   // test page 
+    console.log("redis working")
+    return res.sendStatus(200)
+
+})
+
 // registration route/ validations logic updated   
 router.post('/register', [
-    check('user').isLength({ min: 3 }),
-      check('email').isEmail(),
-        check('pass').isLength({ min : 3})
+    check('user').isLength({ min: 3 }).trim().escape(),
+      check('email').isEmail().normalizeEmail(),
+        check('pass').trim().escape().isLength({min : 4}).isAlphanumeric()
   ] , 
        (req , res) => { 
         let err = validationResult(req) ; 
@@ -43,8 +55,8 @@ router.post('/register', [
 
 // Login/auth check route  / validated
  router.post("/login" , [
-    check('email').isEmail() ,
-    check('pass').isLength({ min: 3 }).isAlphanumeric()
+    check('email').isEmail().normalizeEmail() ,
+    check('pass').isLength({ min: 3 }).isAlphanumeric().trim().escape()
 
   ] , (req , res) => { 
      console.log("route working") ; 
@@ -99,4 +111,5 @@ router.get('/', (req , res ) => {
      console.log("Authentication done , Authenticated to access the page")
        res.send("Authorised to access the page, Welcome")
 });
+
 module.exports = router ; 
